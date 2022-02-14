@@ -17,7 +17,6 @@ class Login extends React.Component {
     });
   }
 
-
   handleClick = ({ target }) => {
     // const { login: loginAction, history } = this.props;
     // const { email } = this.state;
