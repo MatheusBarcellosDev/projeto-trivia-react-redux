@@ -1,6 +1,8 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-// import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import { tokenThunk } from '../store/actions';
 
 class Login extends React.Component {
   constructor() {
@@ -19,12 +21,10 @@ class Login extends React.Component {
     });
   }
 
-  handleClick = ({ target }) => {
-    // const { login: loginAction, history } = this.props;
-    // const { email } = this.state;
-    // loginAction({ email });
-    // history.push('/carteira');
-    console.log(target);
+  handleClick = () => {
+    const { fetchToken, history } = this.props;
+    fetchToken();
+    history.push('/game');
   }
 
   redirectSettings = () => {
@@ -85,13 +85,17 @@ class Login extends React.Component {
   }
 }
 
-// Login.propTypes = {
-//   login: PropTypes.func.isRequired,
-//   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
-// };
+Login.propTypes = {
+  fetchToken: PropTypes.func.isRequired,
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  // tokenData: PropTypes.string.isRequired,
+};
 
-// const mapDispatchToProps = (dispatch) => ({
-//   login: (e) => dispatch(login(e)) });
+// const mapStateToProps = ({ token }) => ({
+//   tokenData: token.token,
+// });
 
-// export default connect(null, mapDispatchToProps)(Login);
-export default Login;
+const mapDispatchToProps = (dispatch) => ({
+  fetchToken: (e) => dispatch(tokenThunk(e)) });
+
+export default connect(null, mapDispatchToProps)(Login);
