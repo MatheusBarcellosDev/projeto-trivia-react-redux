@@ -26,14 +26,14 @@ class Game extends React.Component {
   fetchQuestions = async () => {
     const { savedToken } = this.props;
     const data = this.fetchAPI(savedToken);
-    const INVALID_TOKEN_NUMBER = 3;
-    if (data.response_code === INVALID_TOKEN_NUMBER) {
+    // const INVALID_TOKEN_NUMBER = 3;
+    if (data.response_code === 0) {
+      this.setState({ questions: data.results });
+    } else {
       const result = await fetch('https://opentdb.com/api_token.php?command=request');
       const tokenData = await result.json();
       const newData = await this.fetchAPI(tokenData.token);
       this.setState({ questions: newData.results });
-    } else {
-      this.setState({ questions: data.results });
     }
   }
 
@@ -43,7 +43,23 @@ class Game extends React.Component {
     return (
       <main>
         <Header />
-        <section>A</section>
+        <section>
+          <p data-testid="question-category">{ questions[0] && questions[0].category }</p>
+          <p data-testid="question-text">{ questions[0] && questions[0].question }</p>
+          <div data-testid="answer-options">
+            <button type="button" data-testid="correct-answer">
+              { questions[0] && questions[0].correct_answer }
+            </button>
+            {
+              questions[0]
+                && questions[0].incorrect_answers.map((ans, index) => (
+                  <button type="button" key="ans" data-testid={ `wrong-answer-${index}` }>
+                    {ans}
+                  </button>
+                ))
+            }
+          </div>
+        </section>
       </main>
     );
   }
