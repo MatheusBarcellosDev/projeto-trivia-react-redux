@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { tokenThunk, getGravatarThunk, addPlayer } from '../store/actions';
+import { getGravatarThunk, addPlayer, fetchToken, getToken } from '../store/actions';
 
 class Login extends React.Component {
   constructor() {
@@ -21,14 +21,23 @@ class Login extends React.Component {
     });
   }
 
-  handleClick = () => {
+  handleClick = async () => {
+    const { email, name } = this.state;
+    const { history, fetchGravatar, addPlayerName, getTokenn } = this.props;
+    getTokenn(await fetchToken());
+    fetchGravatar(email);
+    addPlayerName(name, email);
+    history.push('/game');
+  }
+
+  /* handleClick = () => {
     const { email, name } = this.state;
     const { fetchToken, history, fetchGravatar, addPlayerName } = this.props;
     fetchToken();
     fetchGravatar(email);
     addPlayerName(name, email);
     history.push('/game');
-  }
+  } */
 
   redirectSettings = () => {
     this.setState({
@@ -89,10 +98,10 @@ class Login extends React.Component {
 }
 
 Login.propTypes = {
-  fetchToken: PropTypes.func.isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   fetchGravatar: PropTypes.func.isRequired,
   addPlayerName: PropTypes.func.isRequired,
+  getTokenn: PropTypes.func.isRequired,
   // tokenData: PropTypes.string.isRequired,
 };
 
@@ -101,9 +110,11 @@ Login.propTypes = {
 // });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchToken: (e) => dispatch(tokenThunk(e)),
+  /*  fetchToken: (e) => dispatch(tokenThunk(e)), */
+  fetchToken: (e) => dispatch(fetchToken(e)),
   fetchGravatar: (email) => dispatch(getGravatarThunk(email)),
   addPlayerName: (name, email) => dispatch(addPlayer(name, email)),
+  getTokenn: (token) => dispatch(getToken(token)),
 });
 
 export default connect(null, mapDispatchToProps)(Login);
