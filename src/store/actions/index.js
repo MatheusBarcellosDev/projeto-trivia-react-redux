@@ -7,7 +7,7 @@ export const getToken = (value) => ({ type: GET_TOKEN, value });
 export const setLoading = () => ({ type: LOADING });
 export const setGravatar = (gravatar) => ({ type: GET_GRAVATAR, gravatar });
 
-export function tokenThunk() {
+/* export function tokenThunk() {
   return async (dispatch) => {
     try {
       dispatch(setLoading());
@@ -15,12 +15,18 @@ export function tokenThunk() {
       const data = await response.json();
       dispatch(getToken(data.token));
       localStorage.setItem('token', data.token);
-      dispatch(setLoading());
     } catch (error) {
       console.error(error);
     }
   };
-}
+} */
+
+export const fetchToken = async () => {
+  const response = await fetch('https://opentdb.com/api_token.php?command=request');
+  const data = await response.json();
+  localStorage.setItem('token', data.token);
+  return data.token;
+};
 
 export const getGravatarThunk = (email) => (dispatch) => {
   const url = md5(email).toString();
