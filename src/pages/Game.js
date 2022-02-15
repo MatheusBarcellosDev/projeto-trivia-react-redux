@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
-import { tokenThunk } from '../store/actions';
 
 class Game extends React.Component {
   constructor() {
@@ -16,6 +16,12 @@ class Game extends React.Component {
   componentDidMount() {
     this.fetchQuestions();
   }
+
+  // goNext = () => {
+  //   this.setState((state) => ({
+  //     curIndex: state.curIndex + 1,
+  //   }));
+  // }
 
   fetchAPI = async (token) => {
     const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
@@ -55,7 +61,6 @@ class Game extends React.Component {
     if (!newToken) {
       const { tokenData } = this.props;
       data = await this.fetchAPI(tokenData);
-
     } else {
       data = await this.fetchAPI(newToken);
     }
@@ -100,10 +105,18 @@ class Game extends React.Component {
             }
           </div>
         </section>
+        <button type="button" data-testid="btn-next" onClick={ this.goNext }>
+          Next
+        </button>
+        { curIndex === questions.length && <Redirect to="/feedback" /> }
       </main>
     );
   }
 }
+
+Game.propTypes = {
+  tokenData: PropTypes.string.isRequired,
+};
 
 const mapStateToProps = ({ token }) => ({
   tokenData: token.token,
