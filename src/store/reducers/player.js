@@ -1,14 +1,26 @@
+import { ADD_PLAYER, GET_GRAVATAR } from '../actions/actionsTypes';
+
 const INITIAL_STATE = {
   name: '',
   assertions: 0,
   score: 0,
   gravatarEmail: '',
+  email: '',
 };
 
 function player(state = INITIAL_STATE, action) {
   switch (action.type) {
-  case 'ADD_PLAYER':
-    return action.value;
+  case ADD_PLAYER:
+    return {
+      ...state,
+      name: action.name,
+      email: action.email,
+    };
+  case GET_GRAVATAR:
+    return {
+      ...state,
+      gravatarEmail: action.gravatar,
+    };
   default:
     return state;
   }

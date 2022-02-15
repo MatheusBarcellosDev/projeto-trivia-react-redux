@@ -1,7 +1,11 @@
-export const addPlayer = (value) => ({ type: 'ADD_PLAYER', value });
-export const playGame = (value) => ({ type: 'GAME', value });
-export const getToken = (value) => ({ type: 'GET_TOKEN', value });
-export const setLoading = () => ({ type: 'LOADING' });
+import md5 from 'crypto-js/md5';
+import { ADD_PLAYER, GAME, GET_GRAVATAR, GET_TOKEN, LOADING } from './actionsTypes';
+
+export const addPlayer = (name, email) => ({ type: ADD_PLAYER, name, email });
+export const playGame = (value) => ({ type: GAME, value });
+export const getToken = (value) => ({ type: GET_TOKEN, value });
+export const setLoading = () => ({ type: LOADING });
+export const setGravatar = (gravatar) => ({ type: GET_GRAVATAR, gravatar });
 
 export function tokenThunk() {
   return async (dispatch) => {
@@ -17,3 +21,9 @@ export function tokenThunk() {
     }
   };
 }
+
+export const getGravatarThunk = (email) => (dispatch) => {
+  const url = md5(email).toString();
+  return fetch(`https://www.gravatar.com/avatar/${url}`)
+    .then((response) => dispatch(setGravatar(response.url)));
+};

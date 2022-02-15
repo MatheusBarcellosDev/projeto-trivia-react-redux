@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { tokenThunk } from '../store/actions';
+import { tokenThunk, getGravatarThunk, addPlayer } from '../store/actions';
 
 class Login extends React.Component {
   constructor() {
@@ -22,8 +22,11 @@ class Login extends React.Component {
   }
 
   handleClick = () => {
-    const { fetchToken, history } = this.props;
+    const { email, name } = this.state;
+    const { fetchToken, history, fetchGravatar, addPlayerName } = this.props;
     fetchToken();
+    fetchGravatar(email);
+    addPlayerName(name, email);
     history.push('/game');
   }
 
@@ -88,6 +91,8 @@ class Login extends React.Component {
 Login.propTypes = {
   fetchToken: PropTypes.func.isRequired,
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
+  fetchGravatar: PropTypes.func.isRequired,
+  addPlayerName: PropTypes.func.isRequired,
   // tokenData: PropTypes.string.isRequired,
 };
 
@@ -96,6 +101,9 @@ Login.propTypes = {
 // });
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchToken: (e) => dispatch(tokenThunk(e)) });
+  fetchToken: (e) => dispatch(tokenThunk(e)),
+  fetchGravatar: (email) => dispatch(getGravatarThunk(email)),
+  addPlayerName: (name, email) => dispatch(addPlayer(name, email)),
+});
 
 export default connect(null, mapDispatchToProps)(Login);
