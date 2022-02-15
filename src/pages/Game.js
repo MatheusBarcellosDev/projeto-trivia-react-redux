@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
+import { tokenThunk } from '../store/actions';
 
 class Game extends React.Component {
   constructor() {
@@ -20,20 +21,53 @@ class Game extends React.Component {
     const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
     const response = await fetch(URL);
     const data = await response.json();
-    console.log(data);
     return data;
   }
 
-  fetchQuestions = async () => {
-    const { savedToken } = this.props;
-    const data = this.fetchAPI(savedToken);
-    if (data.response_code === 0) {
-      this.setState({ questions: data.results });
+  rearrange = (results) => {
+    const questions = results.map((quest) => {
+      const { category,
+        question,
+        correct_answer: correctAns,
+        incorrect_answers: incorrectList } = quest;
+      const answers = incorrectList.map((ans, index) => ({
+        testId: `wrong-answer-${index}`,
+        ans,
+        isCorrect: false,
+        number: Math.random(),
+      }));
+      return {
+        category,
+        question,
+        answerList: [{
+          ans: correctAns,
+          testId: 'correct-answer',
+          isCorrect: true,
+          number: Math.random(),
+        }, ...answers],
+      };
+    });
+    this.setState({ questions });
+  }
+
+  fetchQuestions = async (newToken) => {
+    let data;
+    if (!newToken) {
+      const { tokenData } = this.props;
+      data = await this.fetchAPI(tokenData);
+
     } else {
-      const result = await fetch('https://opentdb.com/api_token.php?command=request');
-      const tokenData = await result.json();
-      const newData = await this.fetchAPI(tokenData.token);
-      this.setState({ questions: newData.results });
+      data = await this.fetchAPI(newToken);
+    }
+    const ERROR_NUMBER = 3;
+    if (data.response_code !== ERROR_NUMBER) {
+      this.rearrange(data.results);
+      // this.setState({ questions: data.results });
+    } else {
+      const theUrl = 'https://opentdb.com/api_token.php?command=request';
+      const res = await (await fetch(theUrl)).json();
+      await this.fetchQuestions(res.token);
+      // this.setState({ questions: newData.results });
     }
   }
 
@@ -51,16 +85,18 @@ class Game extends React.Component {
             { questions[0] && questions[curIndex].question }
           </p>
           <div data-testid="answer-options">
-            <button type="button" data-testid="correct-answer">
+            {/* <button type="button" data-testid="correct-answer">
               { questions[0] && questions[curIndex].correct_answer }
-            </button>
+            </button> */}
             {
               questions[0]
-                && questions[curIndex].incorrect_answers.map((ans, index) => (
-                  <button type="button" key="ans" data-testid={ `wrong-answer-${index}` }>
-                    {ans}
-                  </button>
-                ))
+                && questions[curIndex].answerList
+                  .sort((a, b) => a.number - b.number)
+                  .map((ans) => (
+                    <button type="button" key={ ans.testId } data-testid={ ans.testId }>
+                      {ans.ans}
+                    </button>
+                  ))
             }
           </div>
         </section>
@@ -69,12 +105,8 @@ class Game extends React.Component {
   }
 }
 
-Game.propTypes = {
-  savedToken: PropTypes.string.isRequired,
-};
-
 const mapStateToProps = ({ token }) => ({
-  savedToken: token.token,
+  tokenData: token.token,
 });
 
 export default connect(mapStateToProps)(Game);
