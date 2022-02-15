@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
+import { fetchToken, getToken } from '../store/actions';
 
 class Game extends React.Component {
   constructor() {
@@ -56,7 +57,25 @@ class Game extends React.Component {
     this.setState({ questions });
   }
 
-  fetchQuestions = async (newToken) => {
+  fetchQuestions = async () => {
+    const { tokenData, getTokenn } = this.props;
+    const ERROR_NUMBER = 3;
+
+    const response = await this.fetchAPI(tokenData);
+    console.log(response);
+    if (response.response_code === ERROR_NUMBER) {
+      console.log('oi');
+      console.log(tokenData);
+      const token = await fetchToken();
+      console.log(token);
+      getTokenn(token);
+      this.fetchQuestions();
+    } else {
+      this.rearrange(response.results);
+    }
+  }
+
+  /* fetchQuestions = async (newToken) => {
     let data;
     if (!newToken) {
       const { tokenData } = this.props;
@@ -74,11 +93,10 @@ class Game extends React.Component {
       await this.fetchQuestions(res.token);
       // this.setState({ questions: newData.results });
     }
-  }
+  } */
 
   render() {
     const { questions, curIndex } = this.state;
-    console.log(questions);
     return (
       <main>
         <Header />
@@ -122,4 +140,13 @@ const mapStateToProps = ({ token }) => ({
   tokenData: token.token,
 });
 
-export default connect(mapStateToProps)(Game);
+const mapDispatchToProps = (dispatch) => ({
+  getTokenn: (token) => dispatch(getToken(token)),
+});
+
+Game.propTypes = {
+  tokenData: PropTypes.string.isRequired,
+  getTokenn: PropTypes.func.isRequired,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Game);
