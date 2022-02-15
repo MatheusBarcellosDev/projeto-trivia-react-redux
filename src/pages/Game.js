@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
 import Header from '../components/Header';
 import { fetchToken, getToken } from '../store/actions';
 
@@ -18,11 +17,18 @@ class Game extends React.Component {
     this.fetchQuestions();
   }
 
-  // goNext = () => {
-  //   this.setState((state) => ({
-  //     curIndex: state.curIndex + 1,
-  //   }));
-  // }
+  goNext = () => {
+    const { curIndex } = this.state;
+    const LAST_INDEX = 4;
+    if (curIndex === LAST_INDEX) {
+      const { history } = this.props;
+      history.push('/feedback');
+    } else {
+      this.setState({
+        curIndex: curIndex + 1,
+      });
+    }
+  }
 
   fetchAPI = async (token) => {
     const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
@@ -126,7 +132,7 @@ class Game extends React.Component {
         <button type="button" data-testid="btn-next" onClick={ this.goNext }>
           Next
         </button>
-        { curIndex === questions.length && <Redirect to="/feedback" /> }
+        {/* { curIndex === questions.length && <Redirect to="/feedback" /> } */}
       </main>
     );
   }
@@ -145,6 +151,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 Game.propTypes = {
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   tokenData: PropTypes.string.isRequired,
   getTokenn: PropTypes.func.isRequired,
 };
