@@ -8,6 +8,7 @@ class Game extends React.Component {
     super();
     this.state = {
       questions: [],
+      curIndex: 0,
     };
   }
 
@@ -26,7 +27,6 @@ class Game extends React.Component {
   fetchQuestions = async () => {
     const { savedToken } = this.props;
     const data = this.fetchAPI(savedToken);
-    // const INVALID_TOKEN_NUMBER = 3;
     if (data.response_code === 0) {
       this.setState({ questions: data.results });
     } else {
@@ -38,21 +38,25 @@ class Game extends React.Component {
   }
 
   render() {
-    const { questions } = this.state;
+    const { questions, curIndex } = this.state;
     console.log(questions);
     return (
       <main>
         <Header />
         <section>
-          <p data-testid="question-category">{ questions[0] && questions[0].category }</p>
-          <p data-testid="question-text">{ questions[0] && questions[0].question }</p>
+          <p data-testid="question-category">
+            { questions[0] && questions[curIndex].category }
+          </p>
+          <p data-testid="question-text">
+            { questions[0] && questions[curIndex].question }
+          </p>
           <div data-testid="answer-options">
             <button type="button" data-testid="correct-answer">
-              { questions[0] && questions[0].correct_answer }
+              { questions[0] && questions[curIndex].correct_answer }
             </button>
             {
               questions[0]
-                && questions[0].incorrect_answers.map((ans, index) => (
+                && questions[curIndex].incorrect_answers.map((ans, index) => (
                   <button type="button" key="ans" data-testid={ `wrong-answer-${index}` }>
                     {ans}
                   </button>
