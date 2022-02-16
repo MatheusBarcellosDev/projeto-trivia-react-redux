@@ -24,6 +24,8 @@ export const setGravatar = (gravatar) => ({ type: GET_GRAVATAR, gravatar });
 export const fetchToken = async () => {
   const response = await fetch('https://opentdb.com/api_token.php?command=request');
   const data = await response.json();
+  console.log(data.token);
+  getToken(data.token);
   localStorage.setItem('token', data.token);
   return data.token;
 };

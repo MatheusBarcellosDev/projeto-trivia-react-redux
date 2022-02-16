@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import Header from '../components/Header';
-import { fetchToken, getToken } from '../store/actions';
+import Header from '../../components/Header';
+import { fetchToken, getToken } from '../../store/actions';
+import './style.css';
 
 class Game extends React.Component {
   constructor() {
@@ -10,12 +11,30 @@ class Game extends React.Component {
     this.state = {
       questions: [],
       curIndex: 0,
+      isCorrect: false,
+
     };
   }
 
   componentDidMount() {
     this.fetchQuestions();
   }
+
+  setColorCorrect() {
+    this.setState({
+      isCorrect: true,
+    });
+  }
+
+  setColor() {
+    this.setColorCorrect();
+  }
+
+  /*  setColorWrong() {
+    this.setState({
+      isCorrect: false,
+    });
+  } */
 
   fetchAPI = async (token) => {
     const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
@@ -90,7 +109,7 @@ class Game extends React.Component {
   } */
 
   render() {
-    const { questions, curIndex } = this.state;
+    const { questions, curIndex, isCorrect } = this.state;
     return (
       <main>
         <Header />
@@ -110,9 +129,28 @@ class Game extends React.Component {
                 && questions[curIndex].answerList
                   .sort((a, b) => a.number - b.number)
                   .map((ans) => (
-                    <button type="button" key={ ans.testId } data-testid={ ans.testId }>
-                      {ans.ans}
-                    </button>
+                    ans.isCorrect
+                      ? (
+                        <button
+                          type="button"
+                          key={ ans.testId }
+                          data-testid="correct-answer"
+                          className={ isCorrect ? 'correct' : '' }
+                          onClick={ () => this.setColor() }
+                        >
+                          {ans.ans}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          key={ ans.testId }
+                          data-testid={ `wrong-answer-${curIndex}` }
+                          className={ isCorrect ? 'wrong' : '' }
+                          onClick={ () => this.setColor() }
+                        >
+                          {ans.ans}
+                        </button>
+                      )
                   ))
             }
           </div>
@@ -123,7 +161,7 @@ class Game extends React.Component {
 }
 
 const mapStateToProps = ({ token }) => ({
-  tokenData: token.token,
+  tokenData: token,
 });
 
 const mapDispatchToProps = (dispatch) => ({

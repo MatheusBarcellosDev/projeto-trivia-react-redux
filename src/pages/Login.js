@@ -102,7 +102,6 @@ Login.propTypes = {
   fetchGravatar: PropTypes.func.isRequired,
   addPlayerName: PropTypes.func.isRequired,
   getTokenn: PropTypes.func.isRequired,
-  // tokenData: PropTypes.string.isRequired,
 };
 
 // const mapStateToProps = ({ token }) => ({
@@ -110,7 +109,6 @@ Login.propTypes = {
 // });
 
 const mapDispatchToProps = (dispatch) => ({
-  /*  fetchToken: (e) => dispatch(tokenThunk(e)), */
   fetchToken: (e) => dispatch(fetchToken(e)),
   fetchGravatar: (email) => dispatch(getGravatarThunk(email)),
   addPlayerName: (name, email) => dispatch(addPlayer(name, email)),
