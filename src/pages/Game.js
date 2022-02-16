@@ -17,6 +17,19 @@ class Game extends React.Component {
     this.fetchQuestions();
   }
 
+  goNext = () => {
+    const { curIndex } = this.state;
+    const LAST_INDEX = 4;
+    if (curIndex === LAST_INDEX) {
+      const { history } = this.props;
+      history.push('/feedback');
+    } else {
+      this.setState({
+        curIndex: curIndex + 1,
+      });
+    }
+  }
+
   fetchAPI = async (token) => {
     const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
     const response = await fetch(URL);
@@ -73,7 +86,6 @@ class Game extends React.Component {
     if (!newToken) {
       const { tokenData } = this.props;
       data = await this.fetchAPI(tokenData);
-
     } else {
       data = await this.fetchAPI(newToken);
     }
@@ -117,10 +129,18 @@ class Game extends React.Component {
             }
           </div>
         </section>
+        <button type="button" data-testid="btn-next" onClick={ this.goNext }>
+          Next
+        </button>
+        {/* { curIndex === questions.length && <Redirect to="/feedback" /> } */}
       </main>
     );
   }
 }
+
+Game.propTypes = {
+  tokenData: PropTypes.string.isRequired,
+};
 
 const mapStateToProps = ({ token }) => ({
   tokenData: token.token,
@@ -131,6 +151,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 Game.propTypes = {
+  history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   tokenData: PropTypes.string.isRequired,
   getTokenn: PropTypes.func.isRequired,
 };
