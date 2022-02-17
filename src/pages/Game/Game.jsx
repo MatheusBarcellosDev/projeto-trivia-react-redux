@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../../components/Header';
-import { fetchToken, getToken } from '../../store/actions';
+import { fetchToken, getToken, updatedScore } from '../../store/actions';
 import './style.css';
-import HALF_MINUTE from '../../consts';
+import { HALF_MINUTE, ONE_POINT, TWO_POINT, THREE_POINT, TEN_POINT } from '../../consts';
 
 class Game extends React.Component {
   constructor() {
@@ -14,12 +14,14 @@ class Game extends React.Component {
       curIndex: 0,
       isCorrect: false,
       counter: HALF_MINUTE,
+      statusTimer: '',
     };
   }
 
   componentDidMount() {
     this.fetchQuestions();
-    this.handleCounter();
+    this.startTimer();
+    this.setLocalStorage();
   }
 
   setColorCorrect() {
@@ -32,57 +34,16 @@ class Game extends React.Component {
     this.setColorCorrect();
   }
 
-  goNext = () => {
-    const { curIndex } = this.state;
-    const { history } = this.props;
-    const lastIndex = 4;
-    if (curIndex === lastIndex) {
-      history.push('/feedback');
-    }
-    this.setState({
-      curIndex: curIndex + 1,
-      counter: HALF_MINUTE,
-      isCorrect: false,
-    });
-  }
-
-  /*  setColorWrong() {
-    this.setState({
-      isCorrect: false,
-    });
-  } */
-
-  fetchAPI = async (token) => {
-    const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
-    const response = await fetch(URL);
-    const data = await response.json();
-    return data;
-  }
-
-  rearrange = (results) => {
-    const questions = results.map((quest) => {
-      const { category,
-        question,
-        correct_answer: correctAns,
-        incorrect_answers: incorrectList } = quest;
-      const answers = incorrectList.map((ans, index) => ({
-        testId: `wrong-answer-${index}`,
-        ans,
-        isCorrect: false,
-        number: Math.random(),
-      }));
-      return {
-        category,
-        question,
-        answerList: [{
-          ans: correctAns,
-          testId: 'correct-answer',
-          isCorrect: true,
-          number: Math.random(),
-        }, ...answers],
-      };
-    });
-    this.setState({ questions });
+  setLocalStorage() {
+    const { player } = JSON.parse(localStorage.getItem('player'));
+    const { name, score, gravatarEmail } = player;
+    console.log(name, score, gravatarEmail);
+    const obj = {
+      name,
+      score,
+      gravatarEmail,
+    };
+    localStorage.setItem('ranking', JSON.stringify(obj));
   }
 
   fetchQuestions = async () => {
@@ -103,33 +64,99 @@ class Game extends React.Component {
     }
   }
 
-  handleCounter() {
-    const ONE_SEC = 1000;
-    setInterval(() => {
-      const { counter } = this.state;
-      if (counter) this.setState({ counter: counter - 1 });
-    }, ONE_SEC);
+  rearrange = (results) => {
+    const questions = results.map((quest) => {
+      const { category,
+        question,
+        correct_answer: correctAns,
+        difficulty,
+        incorrect_answers: incorrectList } = quest;
+      const answers = incorrectList.map((ans, index) => ({
+        testId: `wrong-answer-${index}`,
+        ans,
+        isCorrect: false,
+        number: Math.random(),
+      }));
+      return {
+        category,
+        question,
+        difficulty,
+        answerList: [{
+          ans: correctAns,
+          difficulty,
+          testId: 'correct-answer',
+          isCorrect: true,
+          number: Math.random(),
+        }, ...answers],
+      };
+    });
+    this.setState({ questions });
   }
 
-  /* fetchQuestions = async (newToken) => {
-    let data;
-    if (!newToken) {
-      const { tokenData } = this.props;
-      data = await this.fetchAPI(tokenData);
-    } else {
-      data = await this.fetchAPI(newToken);
+  fetchAPI = async (token) => {
+    const URL = `https://opentdb.com/api.php?amount=5&token=${token}`;
+    const response = await fetch(URL);
+    const data = await response.json();
+    return data;
+  }
+
+  goNext = () => {
+    const { curIndex } = this.state;
+    const { history } = this.props;
+    const lastIndex = 4;
+    if (curIndex === lastIndex) {
+      history.push('/feedback');
     }
-    const ERROR_NUMBER = 3;
-    if (data.response_code !== ERROR_NUMBER) {
-      this.rearrange(data.results);
-      // this.setState({ questions: data.results });
-    } else {
-      const theUrl = 'https://opentdb.com/api_token.php?command=request';
-      const res = await (await fetch(theUrl)).json();
-      await this.fetchQuestions(res.token);
-      // this.setState({ questions: newData.results });
-    }
-  } */
+    this.setState({
+      curIndex: curIndex + 1,
+      counter: HALF_MINUTE,
+      isCorrect: false,
+    });
+  }
+
+  stopTimer() {
+    this.setState({
+      statusTimer: 'stop',
+    });
+  }
+
+  startTimer() {
+    this.setState({
+      statusTimer: '',
+    });
+    this.handleCounter();
+  }
+
+  correctAnswer(difficulty) {
+    const { counter } = this.state;
+    const { updatedScoreState } = this.props;
+    this.setColor();
+    this.stopTimer();
+    let points;
+    if (difficulty === 'easy') points = ONE_POINT;
+    if (difficulty === 'medium') points = TWO_POINT;
+    if (difficulty === 'hard') points = THREE_POINT;
+
+    const ranking = JSON.parse(localStorage.getItem('ranking'));
+    console.log(ranking);
+    ranking.score += points * counter + TEN_POINT;
+    updatedScoreState(ranking.score);
+    localStorage.ranking = JSON.stringify(ranking);
+  }
+
+  handleCounter() {
+    const ONE_SEC = 1000;
+    const timer = setInterval(() => {
+      const { counter, statusTimer } = this.state;
+      if (statusTimer === '') this.setState({ counter: counter - 1 });
+      if (counter === 1 || statusTimer === 'stop') {
+        this.stopTimer();
+      }
+      if (statusTimer === 'stop') {
+        clearInterval(timer);
+      }
+    }, ONE_SEC);
+  }
 
   render() {
     const { questions, curIndex, isCorrect, counter } = this.state;
@@ -145,9 +172,6 @@ class Game extends React.Component {
             { questions[0] && questions[curIndex].question }
           </p>
           <div data-testid="answer-options">
-            {/* <button type="button" data-testid="correct-answer">
-              { questions[0] && questions[curIndex].correct_answer }
-            </button> */}
             {
               questions[0]
                 && questions[curIndex].answerList
@@ -160,7 +184,7 @@ class Game extends React.Component {
                           key={ ans.testId }
                           data-testid="correct-answer"
                           className={ isCorrect ? 'correct' : '' }
-                          onClick={ () => this.setColor() }
+                          onClick={ () => this.correctAnswer(ans.difficulty) }
                           disabled={ counter === 0 }
                         >
                           {ans.ans}
@@ -206,12 +230,14 @@ const mapStateToProps = ({ token }) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getTokenn: (token) => dispatch(getToken(token)),
+  updatedScoreState: (score) => dispatch(updatedScore(score)),
 });
 
 Game.propTypes = {
   history: PropTypes.shape({ push: PropTypes.func }).isRequired,
   tokenData: PropTypes.string.isRequired,
   getTokenn: PropTypes.func.isRequired,
+  updatedScoreState: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
