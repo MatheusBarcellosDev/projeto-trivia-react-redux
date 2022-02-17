@@ -42,6 +42,7 @@ class Game extends React.Component {
       name,
       score,
       gravatarEmail,
+      assertions: 0,
     };
     localStorage.setItem('ranking', JSON.stringify(obj));
   }
@@ -140,6 +141,7 @@ class Game extends React.Component {
     const ranking = JSON.parse(localStorage.getItem('ranking'));
     console.log(ranking);
     ranking.score += points * counter + TEN_POINT;
+    ranking.assertions += 1;
     updatedScoreState(ranking.score);
     localStorage.ranking = JSON.stringify(ranking);
   }
