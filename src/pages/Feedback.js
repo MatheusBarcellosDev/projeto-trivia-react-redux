@@ -17,7 +17,7 @@ class Feedback extends React.Component {
   }
 
   getLocalStorageAssertions() {
-    const { assertions } = JSON.parse(localStorage.getItem('ranking'));
+    const { assertions } = JSON.parse(localStorage.getItem('rankingData'));
     console.log(assertions);
     this.setState({
       assertions,
