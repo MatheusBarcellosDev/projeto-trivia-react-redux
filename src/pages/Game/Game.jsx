@@ -186,6 +186,7 @@ class Game extends React.Component {
           type="button"
           data-testid="btn-next"
           onClick={ this.goNext }
+          className="toggle-btn"
         >
           Next
         </button>
