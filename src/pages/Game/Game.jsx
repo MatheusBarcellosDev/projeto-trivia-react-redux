@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import Header from '../../components/Header';
 import { fetchToken, getToken } from '../../store/actions';
 import './style.css';
+import HALF_MINUTE from '../../consts';
 
 class Game extends React.Component {
   constructor() {
@@ -12,12 +13,13 @@ class Game extends React.Component {
       questions: [],
       curIndex: 0,
       isCorrect: false,
-
+      counter: HALF_MINUTE,
     };
   }
 
   componentDidMount() {
     this.fetchQuestions();
+    this.handleCounter();
   }
 
   setColorCorrect() {
@@ -28,6 +30,20 @@ class Game extends React.Component {
 
   setColor() {
     this.setColorCorrect();
+  }
+
+  goNext = () => {
+    const { curIndex } = this.state;
+    const { history } = this.props;
+    const lastIndex = 4;
+    if (curIndex === lastIndex) {
+      history.push('/feedback');
+    }
+    this.setState({
+      curIndex: curIndex + 1,
+      counter: HALF_MINUTE,
+      isCorrect: false,
+    });
   }
 
   /*  setColorWrong() {
@@ -87,6 +103,14 @@ class Game extends React.Component {
     }
   }
 
+  handleCounter() {
+    const ONE_SEC = 1000;
+    setInterval(() => {
+      const { counter } = this.state;
+      if (counter) this.setState({ counter: counter - 1 });
+    }, ONE_SEC);
+  }
+
   /* fetchQuestions = async (newToken) => {
     let data;
     if (!newToken) {
@@ -108,10 +132,11 @@ class Game extends React.Component {
   } */
 
   render() {
-    const { questions, curIndex, isCorrect } = this.state;
+    const { questions, curIndex, isCorrect, counter } = this.state;
     return (
       <main>
         <Header />
+        <p>{ counter }</p>
         <section>
           <p data-testid="question-category">
             { questions[0] && questions[curIndex].category }
@@ -136,6 +161,7 @@ class Game extends React.Component {
                           data-testid="correct-answer"
                           className={ isCorrect ? 'correct' : '' }
                           onClick={ () => this.setColor() }
+                          disabled={ counter === 0 }
                         >
                           {ans.ans}
                         </button>
@@ -146,6 +172,7 @@ class Game extends React.Component {
                           data-testid={ `wrong-answer-${curIndex}` }
                           className={ isCorrect ? 'wrong' : '' }
                           onClick={ () => this.setColor() }
+                          disabled={ counter === 0 }
                         >
                           {ans.ans}
                         </button>
