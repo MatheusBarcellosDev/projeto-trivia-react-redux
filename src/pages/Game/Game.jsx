@@ -181,7 +181,12 @@ class Game extends React.Component {
             }
           </div>
         </section>
-        <button type="button" data-testid="btn-next" onClick={ this.goNext }>
+        <button
+          disabled={ !isCorrect }
+          type="button"
+          data-testid="btn-next"
+          onClick={ this.goNext }
+        >
           Next
         </button>
         {/* { curIndex === questions.length && <Redirect to="/feedback" /> } */}
