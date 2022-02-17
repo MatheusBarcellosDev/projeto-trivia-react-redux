@@ -21,6 +21,11 @@ function player(state = INITIAL_STATE, action) {
       ...state,
       gravatarEmail: action.gravatar,
     };
+  case 'UPDATE_SCORE':
+    return {
+      ...state,
+      score: action.score,
+    };
   default:
     return state;
   }

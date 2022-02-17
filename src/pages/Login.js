@@ -26,6 +26,7 @@ class Login extends React.Component {
     const { history, fetchGravatar, addPlayerName, getTokenn } = this.props;
     getTokenn(await fetchToken());
     fetchGravatar(email);
+    this.savePlayer();
     addPlayerName(name, email);
     history.push('/game');
   }
@@ -43,6 +44,19 @@ class Login extends React.Component {
     this.setState({
       redirect: true,
     });
+  }
+
+  savePlayer() {
+    const { email, name } = this.state;
+    const obj = {
+      player: {
+        name,
+        gravatarEmail: email,
+        score: 0,
+        assertions: 0,
+      },
+    };
+    localStorage.setItem('player', JSON.stringify(obj));
   }
 
   render() {
