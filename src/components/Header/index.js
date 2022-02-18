@@ -19,7 +19,7 @@ class Header extends Component {
           />
         </div>
         <span data-testid="header-score" className="header__score">
-          { `Pontuação: ${score}` }
+          { score }
         </span>
         <span data-testid="header-player-name" className="header__user">{ name }</span>
       </header>
