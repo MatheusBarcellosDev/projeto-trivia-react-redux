@@ -5,6 +5,7 @@ import Header from '../../components/Header';
 import { fetchToken, getToken, updatedScore } from '../../store/actions';
 import './style/style.css';
 import { HALF_MINUTE, ONE_POINT, TWO_POINT, THREE_POINT, TEN_POINT } from '../../consts';
+import setRanking from '../../services';
 
 class Game extends React.Component {
   constructor() {
@@ -22,12 +23,11 @@ class Game extends React.Component {
     this.fetchQuestions();
     this.startTimer();
     this.setLocalStorage();
+    this.clearScore();
   }
 
   setColorCorrect() {
-    this.setState({
-      isCorrect: true,
-    });
+    this.setState({ isCorrect: true });
   }
 
   setColor() {
@@ -39,7 +39,7 @@ class Game extends React.Component {
     const { name, score, gravatarEmail } = player;
     console.log(name, score, gravatarEmail);
     const obj = { name, score, gravatarEmail, assertions: 0 };
-    localStorage.setItem('ranking', JSON.stringify(obj));
+    localStorage.setItem('rankingData', JSON.stringify(obj));
   }
 
   fetchQuestions = async () => {
@@ -47,12 +47,8 @@ class Game extends React.Component {
     const ERROR_NUMBER = 3;
 
     const response = await this.fetchAPI(tokenData);
-    console.log(response);
     if (response.response_code === ERROR_NUMBER) {
-      console.log('oi');
-      console.log(tokenData);
       const token = await fetchToken();
-      console.log(token);
       getTokenn(token);
       this.fetchQuestions();
     } else {
@@ -101,6 +97,8 @@ class Game extends React.Component {
     const { history } = this.props;
     const lastIndex = 4;
     if (curIndex === lastIndex) {
+      const { playerName, playerPicture, playerScore } = this.props;
+      setRanking({ playerName, playerPicture, playerScore });
       history.push('/feedback');
     }
     this.setState({
@@ -108,6 +106,11 @@ class Game extends React.Component {
       counter: HALF_MINUTE,
       isCorrect: false,
     });
+  }
+
+  clearScore() {
+    const { updatedScoreState } = this.props;
+    updatedScoreState(0);
   }
 
   stopTimer() {
@@ -133,12 +136,12 @@ class Game extends React.Component {
     if (difficulty === 'medium') points = TWO_POINT;
     if (difficulty === 'hard') points = THREE_POINT;
 
-    const ranking = JSON.parse(localStorage.getItem('ranking'));
-    console.log(ranking);
-    ranking.score += points * counter + TEN_POINT;
-    ranking.assertions += 1;
-    updatedScoreState(ranking.score);
-    localStorage.ranking = JSON.stringify(ranking);
+    const rankingData = JSON.parse(localStorage.getItem('rankingData'));
+    console.log(rankingData);
+    rankingData.score += points * counter + TEN_POINT;
+    rankingData.assertions += 1;
+    updatedScoreState(rankingData.score);
+    localStorage.rankingData = JSON.stringify(rankingData);
   }
 
   handleCounter() {
@@ -229,8 +232,11 @@ Game.propTypes = {
   tokenData: PropTypes.string.isRequired,
 };
 
-const mapStateToProps = ({ token }) => ({
+const mapStateToProps = ({ token, player }) => ({
   tokenData: token,
+  playerScore: player.score,
+  playerName: player.name,
+  playerPicture: player.picture,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -243,5 +249,8 @@ Game.propTypes = {
   tokenData: PropTypes.string.isRequired,
   getTokenn: PropTypes.func.isRequired,
   updatedScoreState: PropTypes.func.isRequired,
+  playerScore: PropTypes.number.isRequired,
+  playerName: PropTypes.string.isRequired,
+  playerPicture: PropTypes.string.isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Game);
