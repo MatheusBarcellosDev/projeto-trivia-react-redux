@@ -10,8 +10,7 @@ import setRanking from '../../services';
 class Game extends React.Component {
   constructor() {
     super();
-    this.state = {
-      questions: [],
+    this.state = { questions: [],
       curIndex: 0,
       isCorrect: false,
       counter: HALF_MINUTE,
@@ -51,15 +50,12 @@ class Game extends React.Component {
       const token = await fetchToken();
       getTokenn(token);
       this.fetchQuestions();
-    } else {
-      this.rearrange(response.results);
-    }
+    } else { this.rearrange(response.results); }
   }
 
   rearrange = (results) => {
     const questions = results.map((quest) => {
-      const { category,
-        question,
+      const { category, question,
         correct_answer: correctAns,
         difficulty,
         incorrect_answers: incorrectList } = quest;
@@ -69,12 +65,10 @@ class Game extends React.Component {
         isCorrect: false,
         number: Math.random(),
       }));
-      return {
-        category,
+      return { category,
         question,
         difficulty,
-        answerList: [{
-          ans: correctAns,
+        answerList: [{ ans: correctAns,
           difficulty,
           testId: 'correct-answer',
           isCorrect: true,
@@ -114,9 +108,7 @@ class Game extends React.Component {
   }
 
   stopTimer() {
-    this.setState({
-      statusTimer: 'stop',
-    });
+    this.setState({ statusTimer: 'stop' });
   }
 
   startTimer() {
