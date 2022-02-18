@@ -154,7 +154,7 @@ class Game extends React.Component {
     const { questions, curIndex, isCorrect, counter } = this.state;
     const NUMBER_DANGER = 10;
     return (
-      <main>
+      <main className="main__container">
         <Header />
         <section className="container-fluid content__questions">
           <div className="timer">
@@ -228,7 +228,7 @@ const mapStateToProps = ({ token, player }) => ({
   tokenData: token,
   playerScore: player.score,
   playerName: player.name,
-  playerPicture: player.picture,
+  playerPicture: player.gravatarEmail,
 });
 
 const mapDispatchToProps = (dispatch) => ({

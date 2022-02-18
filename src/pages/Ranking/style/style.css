@@ -1,0 +1,52 @@
+.ranking__container {
+  align-items: center;/* background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+    rgba(9, 121, 73, 1) 33%,
+    rgba(0, 212, 255, 1) 100%
+    ); */
+  color: rgb(2, 0, 36);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.ranking__title {
+  color: white;
+  font-size: 40px;
+  font-weight: 600;
+  padding: 10px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+.ranking__card {
+  align-items: center;
+  background: rgba(0, 0, 0, 0.315);
+  border-radius: 10px;
+  color: white;
+  display: flex;
+  font-size: 19px;
+  justify-content: space-between;
+  margin: 10px;
+  text-align: center;
+}
+
+.ranking__img {
+  border-radius: 50%;
+  width: 50px;
+}
+
+
+.width {
+  align-items: center;
+  display: flex;
+  height: 70px;
+  justify-content: space-around;
+  width: 150px;
+}
+
+.btn-dafault {
+  margin-top: 20px;
+  width: 30%;
+}
