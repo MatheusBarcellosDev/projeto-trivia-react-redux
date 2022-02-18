@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../../components/Header';
+import './style/style.css';
 
 class Feedback extends React.Component {
   constructor() {
@@ -32,32 +33,73 @@ class Feedback extends React.Component {
   }
 
   render() {
-    const { assertions, score } = this.props;
+    const { score, assertions } = this.props;
+    /* const { assertions } = this.state; */
+    // se os acertos nao estiverem aparecendo na tela usar o assertions do state e nao das props
     return (
-      <>
+      <main className="container__feedback">
         <Header />
-        <main>
-          <p>
-            <span>Total Score: </span>
-            <span data-testid="feedback-total-score">{ score }</span>
-          </p>
-          <p>
-            <span>Correct Answers: </span>
-            <span data-testid="feedback-total-question">{ assertions }</span>
-          </p>
-          <Link data-testid="btn-play-again" to="/">Play Again</Link>
-          <Link data-testid="btn-ranking" to="/ranking">Ranking</Link>
-          <section>Feedback</section>
-          <span data-testid="feedback-text">{this.renderMessage()}</span>
-        </main>
-      </>
+        <div className="feedback__text">
+          <h1
+            className="feedback__message"
+            data-testid="feedback-text"
+          >
+            {this.renderMessage()}
+
+          </h1>
+        </div>
+
+        <div className="content__feedback">
+          <div className="container__default">
+            <span className="text__default">Total Score </span>
+            <span
+              className="text__defaultResult"
+              data-testid="feedback-total-score"
+            >
+              { score }
+
+            </span>
+          </div>
+          <div className="container__default">
+
+            <span className="text__default">Correct Answers: </span>
+            <span
+              className="text__defaultResult"
+              data-testid="feedback-total-question"
+            >
+              { assertions }
+
+            </span>
+
+          </div>
+          <div className="container__btn">
+            <Link
+              data-testid="btn-play-again"
+              className="btn btn-dark widthh"
+              to="/"
+            >
+              Play Again
+
+            </Link>
+            <Link
+              data-testid="btn-ranking"
+              className="btn btn-warning widthh"
+              to="/ranking"
+            >
+              Ranking
+
+            </Link>
+          </div>
+        </div>
+      </main>
+
     );
   }
 }
 
 Feedback.propTypes = {
-  assertions: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
+  assertions: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = ({ player }) => ({
