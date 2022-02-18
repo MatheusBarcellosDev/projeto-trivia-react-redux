@@ -1,0 +1,142 @@
+main {
+  align-items: center;/* background: linear-gradient(
+    90deg,
+    rgba(2, 0, 36, 1) 0%,
+        rgba(9, 121, 73, 1) 33%,
+        rgba(0, 212, 255, 1) 100%
+        ); */
+  color: rgb(2, 0, 36);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+}
+
+.content__questions {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.questions__category {
+  color: white;
+  font-size: 20px;
+  padding: 10px;
+  text-align: center;
+}
+
+.questions__question {
+  color: white;
+  font-size: 40px;
+  font-weight: 600;
+  padding: 10px;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.9);
+}
+
+
+.questions__answer {
+  display: flex;
+  gap: 15px;
+}
+
+.timer__default {
+  background-color: white;
+  border-radius: 50%;
+  color: rgb(68, 64, 64);
+  display: inline-block;
+  font-size: 80px;
+  height: 120px;
+  line-height: 120px;
+  margin-top: 20px;
+  text-align: center;
+  width: 120px;
+}
+
+.btnDefault {
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.btnDefault:hover {
+  background: white;
+  color: black;
+  cursor: pointer;
+}
+
+.btnDefault:disabled {
+  background: rgba(0, 0, 0, 0.1);
+  border: none;
+  color: black;
+  cursor: not-allowed;
+}
+
+.btn-next {
+  background: transparent;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.timer__danger {
+  background-color: white;
+  border-radius: 50%;
+  color: red;
+  display: inline-block;
+  font-size: 80px;
+  height: 120px;
+  line-height: 120px;
+  margin-top: 20px;
+  text-align: center;
+  width: 120px;
+}
+
+.btn-next:hover {
+  background: white;
+  color: black;
+  cursor: pointer;
+}
+
+.correct {
+  background: transparent;
+  border: 3px solid rgb(6, 240, 15);
+  border-radius: 5px;
+  color: white;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.wrong {
+  background: transparent;
+  border: 3px solid red;
+  border-radius: 5px;
+  color: white;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.toggle-btn:disabled {
+  display: none;
+}
