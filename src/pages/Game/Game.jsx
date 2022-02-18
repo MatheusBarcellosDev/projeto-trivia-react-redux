@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Header from '../../components/Header';
 import { fetchToken, getToken, updatedScore } from '../../store/actions';
-import './style.css';
+import './style/style.css';
 import { HALF_MINUTE, ONE_POINT, TWO_POINT, THREE_POINT, TEN_POINT } from '../../consts';
 
 class Game extends React.Component {
@@ -38,12 +38,7 @@ class Game extends React.Component {
     const { player } = JSON.parse(localStorage.getItem('player'));
     const { name, score, gravatarEmail } = player;
     console.log(name, score, gravatarEmail);
-    const obj = {
-      name,
-      score,
-      gravatarEmail,
-      assertions: 0,
-    };
+    const obj = { name, score, gravatarEmail, assertions: 0 };
     localStorage.setItem('ranking', JSON.stringify(obj));
   }
 
@@ -162,18 +157,27 @@ class Game extends React.Component {
 
   render() {
     const { questions, curIndex, isCorrect, counter } = this.state;
+    const NUMBER_DANGER = 10;
     return (
       <main>
         <Header />
-        <p>{ counter }</p>
-        <section>
-          <p data-testid="question-category">
-            { questions[0] && questions[curIndex].category }
-          </p>
-          <p data-testid="question-text">
-            { questions[0] && questions[curIndex].question }
-          </p>
-          <div data-testid="answer-options">
+        <section className="container-fluid content__questions">
+          <div className="timer">
+            <p
+              className={ counter <= NUMBER_DANGER ? 'timer__danger' : 'timer__default' }
+            >
+              { counter }
+            </p>
+          </div>
+          <div className="questions">
+            <p data-testid="question-category" className="questions__category">
+              { questions[0] && questions[curIndex].category }
+            </p>
+            <p data-testid="question-text" className="questions__question">
+              { questions[0] && questions[curIndex].question }
+            </p>
+          </div>
+          <div data-testid="answer-options" className="questions__answer ">
             {
               questions[0]
                 && questions[curIndex].answerList
@@ -185,7 +189,7 @@ class Game extends React.Component {
                           type="button"
                           key={ ans.testId }
                           data-testid="correct-answer"
-                          className={ isCorrect ? 'correct' : '' }
+                          className={ isCorrect ? 'correct' : 'btnDefault' }
                           onClick={ () => this.correctAnswer(ans.difficulty) }
                           disabled={ counter === 0 }
                         >
@@ -196,7 +200,7 @@ class Game extends React.Component {
                           type="button"
                           key={ ans.testId }
                           data-testid={ `wrong-answer-${curIndex}` }
-                          className={ isCorrect ? 'wrong' : '' }
+                          className={ isCorrect ? 'wrong' : 'btnDefault' }
                           onClick={ () => this.setColor() }
                           disabled={ counter === 0 }
                         >
@@ -212,11 +216,10 @@ class Game extends React.Component {
           type="button"
           data-testid="btn-next"
           onClick={ this.goNext }
-          className="toggle-btn"
+          className="toggle-btn btn-next"
         >
           Next
         </button>
-        {/* { curIndex === questions.length && <Redirect to="/feedback" /> } */}
       </main>
     );
   }
@@ -241,5 +244,4 @@ Game.propTypes = {
   getTokenn: PropTypes.func.isRequired,
   updatedScoreState: PropTypes.func.isRequired,
 };
-
 export default connect(mapStateToProps, mapDispatchToProps)(Game);

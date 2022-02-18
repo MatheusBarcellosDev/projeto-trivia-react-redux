@@ -2,7 +2,10 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getGravatarThunk, addPlayer, fetchToken, getToken } from '../store/actions';
+import { FaWhmcs, FaPlay } from 'react-icons/fa';
+import { getGravatarThunk, addPlayer, fetchToken, getToken } from '../../store/actions';
+import imgTrivia from './assets/trivia.png';
+import './style/style.css';
 
 class Login extends React.Component {
   constructor() {
@@ -62,51 +65,62 @@ class Login extends React.Component {
   render() {
     const { email, name, redirect } = this.state;
     return (
-      <>
-        <form>
+      <div className="container-fluid center">
+        <form className="container__login">
+          <div className="container__login_logo">
+            <img src={ imgTrivia } alt="logo" className="img-fluid" />
+          </div>
           <label htmlFor="name-input">
-            <h5>Nome:</h5>
             <input
               data-testid="input-player-name"
               placeholder="Nome"
+              className="form-control"
               id="name-input"
               type="text"
               onChange={ this.handleChange }
               value={ name }
               name="name"
+              autoComplete="off"
             />
           </label>
           <label htmlFor="email-input">
-            <h5>Email:</h5>
             <input
               data-testid="input-gravatar-email"
               placeholder="Email"
+              className="form-control"
               id="email-input"
               type="email"
               name="email"
               onChange={ this.handleChange }
+              autoComplete="off"
               value={ email }
             />
           </label>
           <button
             type="button"
             data-testid="btn-play"
+            className="btn btn-outline-primary"
             onClick={ this.handleClick }
             disabled={ !name || !email }
           >
             Play
+            {' '}
+            <FaPlay />
           </button>
 
           <button
             type="button"
             data-testid="btn-settings"
+            className="btn btn-outline-secondary"
             onClick={ this.redirectSettings }
           >
             Configurações
+            {' '}
+            <FaWhmcs />
           </button>
         </form>
         { redirect && <Redirect to="/settings" /> }
-      </>
+      </div>
     );
   }
 }
